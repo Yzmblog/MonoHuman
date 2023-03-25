@@ -10,7 +10,7 @@
 [Wayne Wu](https://wywu.github.io/),
 and [Kwan-Yee Lin](https://kwanyeelin.github.io/)
 <br>
-**[Demo Video](#)** | **[Project Page](https://yzmblog.github.io/projects/MonoHuman)**
+**[Demo Video](https://www.youtube.com/watch?v=T91fXw9dOmM)** | **[Project Page](https://yzmblog.github.io/projects/MonoHuman)**
 | **[Paper (coming soon)](#)**
 
 This is an official implementation of MonoHuman using [PyTorch](https://pytorch.org/)
