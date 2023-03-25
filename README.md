@@ -4,8 +4,8 @@
 
 
 **MonoHuman: Animatable Human Neural Field from Monocular Video**<br>
-[Zhengming Yu](https://yzmblog.github.io/)\*,
-[Wei Cheng](#)\*,
+[Zhengming Yu](https://yzmblog.github.io/),
+[Wei Cheng](#),
 [Xian Liu](https://alvinliu0.github.io/),
 [Wayne Wu](https://wywu.github.io/),
 and [Kwan-Yee Lin](https://weidong-tom-cai.github.io/)
