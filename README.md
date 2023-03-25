@@ -1,11 +1,16 @@
-# MonoHuman: Animatable Human Neural Field from Monocular Video
+# MonoHuman: Animatable Human Neural Field from Monocular Video (CVPR 2023)
 
 <img src="./assets/teaser.jpg">
 
 
-**MonoHuman: Animatable Human Neural Field from Monocular Video**
-Mnohuman contributors
-**[Paper (coming soon)](#)**
+**MonoHuman: Animatable Human Neural Field from Monocular Video**<br>
+[Zhengming Yu](https://yzmblog.github.io/)\*,
+[Wei Cheng](#)\*,
+[Xian Liu](https://alvinliu0.github.io/),
+[Wayne Wu](https://wywu.github.io/),
+and [Kwan-Yee Lin](https://weidong-tom-cai.github.io/),
+**[Demo Video](#)** | **[Project Page](https://yzmblog.github.io/projects/MonoHuman)**
+| **[Paper (coming soon)](#)**
 
 This is an official implementation of MonoHuman using [PyTorch](https://pytorch.org/)
 
