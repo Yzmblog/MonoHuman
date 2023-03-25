@@ -8,7 +8,7 @@
 [Wei Cheng](#),
 [Xian Liu](https://alvinliu0.github.io/),
 [Wayne Wu](https://wywu.github.io/),
-and [Kwan-Yee Lin](https://weidong-tom-cai.github.io/)
+and [Kwan-Yee Lin](https://kwanyeelin.github.io/)
 <br>
 **[Demo Video](#)** | **[Project Page](https://yzmblog.github.io/projects/MonoHuman)**
 | **[Paper (coming soon)](#)**
