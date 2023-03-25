@@ -109,8 +109,6 @@ Render free-viewpoint images on a particular frame (e.g., subject 386 and frame 
 ## Citation
 If you find this work useful for your research, please consider citing our paper: 
 
-**Pending**
-
 ```bibtex
 @inproceedings{yu2023monohuman,
   title={{MonoHuman}: Animatable Human Neural Field from Monocular Video},
