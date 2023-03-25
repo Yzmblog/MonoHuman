@@ -115,7 +115,7 @@ If you find this work useful for your research, please consider citing our paper
 @inproceedings{yu2023monohuman,
   title={{MonoHuman}: Animatable Human Neural Field from Monocular Video},
   author={Yu, Zhengming and Cheng, Wei and Liu, xian and Wu, Wayne and Lin, Kwan-Yee},
-  booktitle={cvpr2023},
+  booktitle={CVPR},
   year={2023}
 }
 ```
