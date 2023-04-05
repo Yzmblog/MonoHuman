@@ -1,26 +1,26 @@
-category: 'human_nerf'
+category: 'monohuman'
 
 
 ##############################################3
 ## Network Specs
 
 # modules
-network_module: 'core.nets.human_nerf.network'
-trainer_module: 'core.train.trainers.human_nerf.trainer'
-lr_updater_module: 'core.train.trainers.human_nerf.lr_updaters.exp_decay'
-optimizer_module: 'core.train.optimizers.human_nerf.optimizer'
+network_module: 'core.nets.monohuman.network'
+trainer_module: 'core.train.trainers.monohuman.trainer'
+lr_updater_module: 'core.train.trainers.monohuman.lr_updaters.exp_decay'
+optimizer_module: 'core.train.optimizers.monohuman.optimizer'
 
 # positional embedder -- canonical mlp
 embedder:
-  module: "core.nets.human_nerf.embedders.fourier"
+  module: "core.nets.monohuman.embedders.fourier"
 
 # positional embedder -- non-rigid motion mlp
 non_rigid_embedder:
-  module: "core.nets.human_nerf.embedders.hannw_fourier"
+  module: "core.nets.monohuman.embedders.hannw_fourier"
 
 # canonical mlp
 canonical_mlp:
-  module: 'core.nets.human_nerf.canonical_mlps.mlp_rgb_sigma'
+  module: 'core.nets.monohuman.canonical_mlps.mlp_rgb_sigma'
   mlp_depth: 8         # layers in network
   mlp_width: 256       # channels per layer
   multires: 10         # log2 of max freq for positional encoding (3D location)
@@ -28,14 +28,14 @@ canonical_mlp:
 
 # motion weights volume
 mweight_volume:
-  module: 'core.nets.human_nerf.mweight_vol_decoders.deconv_vol_decoder'
+  module: 'core.nets.monohuman.mweight_vol_decoders.deconv_vol_decoder'
   embedding_size: 256
   volume_size: 32
   dst_voxel_size: 0.0625
 
 # non-rigid motion mlp
 non_rigid_motion_mlp:
-  module: 'core.nets.human_nerf.non_rigid_motion_mlps.mlp_offset'
+  module: 'core.nets.monohuman.non_rigid_motion_mlps.mlp_offset'
   condition_code_size: 69
   mlp_width: 128
   mlp_depth: 6
@@ -48,7 +48,7 @@ non_rigid_motion_mlp:
 
 # pose decoder
 pose_decoder:
-  module: 'core.nets.human_nerf.pose_decoders.mlp_delta_body_pose'
+  module: 'core.nets.monohuman.pose_decoders.mlp_delta_body_pose'
   embedding_size: 69
   mlp_width: 256
   mlp_depth: 4
@@ -110,6 +110,12 @@ tpose:
   shuffle: False
   drop_last: False
 
+text:
+  batch_size: 1
+  shuffle: False
+  drop_last: False
+  pose_path: ''
+
 
 ##############################################3
 ## Misc
@@ -117,6 +123,8 @@ tpose:
 sex: 'neutral'
 total_bones: 24
 bbox_offset: 0.3
+
+kick_in_feature: 0
 
 # load_net: latest
 save_all: True    # save all checkpoints

@@ -14,8 +14,6 @@ from core.data import create_dataloader
 from core.utils.network_util import set_requires_grad
 from core.utils.train_util import cpu_data_to_gpu, Timer
 from core.utils.image_util import tile_images, to_8b_image
-from torch.utils.tensorboard import SummaryWriter
-
 from configs import cfg
 
 img2mse = lambda x, y : torch.mean((x - y) ** 2)
@@ -24,8 +22,6 @@ to8b = lambda x : (255.*np.clip(x,0.,1.)).astype(np.uint8)
 
 EXCLUDE_KEYS_TO_GPU = ['frame_name', 'img_width', 'img_height']
 
-tensor_dir = os.path.join(cfg.logdir, 'tensorboard')
-os.makedirs(tensor_dir, exist_ok=True)
 
 
 def _unpack_imgs(rgbs, patch_masks, bgcolor, targets, div_indices):
@@ -210,10 +206,8 @@ class Trainer(object):
             is_reload_model = False
             if (self.iter in [100, 300, 1000, 2500] or \
                 self.iter % cfg.progress.dump_interval == 0):
-                if cfg.ddp:
                     is_reload_model = self.progress()
-                else:
-                    is_reload_model = self.progress()
+                    
             if not is_reload_model:
                 if self.iter % cfg.train.save_checkpt_interval  == 0:
                 #if self.iter % 500 == 0:

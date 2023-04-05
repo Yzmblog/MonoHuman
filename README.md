@@ -11,7 +11,7 @@
 and [Kwan-Yee Lin](https://kwanyeelin.github.io/)
 <br>
 **[Demo Video](https://www.youtube.com/watch?v=T91fXw9dOmM)** | **[Project Page](https://yzmblog.github.io/projects/MonoHuman)**
-| **[Paper (coming soon)](#)**
+| **[Paper](https://arxiv.org/abs/2304.02001)**
 
 This is an official implementation of MonoHuman using [PyTorch](https://pytorch.org/)
 
@@ -25,7 +25,7 @@ We recommend to use [Anaconda](https://www.anaconda.com/).
 
 Create and activate a virtual environment.
 
-    conda env create -f environment.yml
+    conda env create -f environment.yaml
     conda activate Monohuman
 
 ### `Download SMPL model`
@@ -34,9 +34,7 @@ Download the gender neutral SMPL model from [here](https://smplify.is.tue.mpg.de
 
 Copy the smpl model.
 
-    SMPL_DIR=/path/to/smpl
-    MODEL_DIR=$SMPL_DIR/smplify_public/code/models
-    cp $MODEL_DIR/basicModel_neutral_lbs_10_207_0_v1.0.0.pkl third_parties/smpl/models
+    cp /path/to/smpl/smplify_public/code/models/basicModel_neutral_lbs_10_207_0_v1.0.0.pkl third_parties/smpl/models
 
 Follow [this page](https://github.com/vchoutas/smplx/tree/master/tools) to remove Chumpy objects from the SMPL model.
 
@@ -62,10 +60,12 @@ Follow [this page](https://github.com/vchoutas/smplx/tree/master/tools) to remov
     cd ../../
 ```
 
+4. Modify the 'dataset_path' in core/data/dataset_args.py to your /path/to/dataset
+
 ### `Training`
 Please replace the 'xxx' to the subject ID
 
-    python train.py --cfg configs/monohuman/zju_mocap/xxx/xxx.yaml
+    python train.py --cfg configs/monohuman/zju_mocap/xxx/xxx.yaml resume False
 
 
 ### `Rendering and Evalutaion`
@@ -78,15 +78,6 @@ Render the motion sequence. (e.g., subject 377)
 
 ![video](assets/377_movement.gif)
 
-Render the text driven motion sequence.
-Generate poses sequence from [MDM](https://github.com/GuyTevet/motion-diffusion-model), and put the sequence to `path/to/pose_sequence/sequence.npy` (e.g., subject 394 and backflip)
-
-    python run.py \
-        --type text \
-        --cfg configs/monohuman/zju_mocap/394/394.yaml \
-        --pose path/to/pose_sequence/backflip.npy
-![video](assets/backflip.gif)
-
 Render free-viewpoint images on a particular frame (e.g., subject 386 and frame 100).
 
     python run.py \
@@ -95,13 +86,24 @@ Render free-viewpoint images on a particular frame (e.g., subject 386 and frame 
         freeview.frame_idx 100
 ![video](assets/386_free.gif)
 
+Render the text driven motion sequence.
+Generate poses sequence from [MDM](https://github.com/GuyTevet/motion-diffusion-model), and put the sequence to `path/to/pose_sequence/sequence.npy` (e.g., subject 394 and backflip)
 
+    python run.py \
+        --type text \
+        --cfg configs/monohuman/zju_mocap/394/394.yaml \
+        text.pose_path path/to/pose_sequence/backflip.npy
+![video](assets/backflip.gif)
+
+## Acknowledgement
+
+Our code took reference from [HumanNeRF](https://github.com/chungyiweng/humannerf), [IBRNet](https://github.com/googleinterns/IBRNet), [Neural Body](https://github.com/zju3dv/neuralbody). We thank these authors for their great works and open-source contribution.
 
 ## TODO
 - [x] Code Release.
 - [x] Demo Video Release.
+- [x] Paper Release.
 - [ ] DDP Training.
-- [ ] Paper Release.
 - [ ] Pretrained Model Release.
 
 

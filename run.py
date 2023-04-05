@@ -17,7 +17,6 @@ from core.utils.image_util import ImageWriter, to_8b_image, to_8b3ch_image
 from third_parties import lpips
 from third_parties.lpips import LPIPS
 import skimage
-from eval import print_write
 from core.nets import setup_distributed
 
 EXCLUDE_KEYS_TO_GPU = ['frame_name',
@@ -125,15 +124,19 @@ def run_tpose():
         folder_name='tpose' \
             if not cfg.render_folder_name else cfg.render_folder_name)
 
+def run_text():
+    _freeview(
+        data_type='text',
+        folder_name='text' \
+            if not cfg.render_folder_name else cfg.render_folder_name)
 
 def run_movement(render_folder_name='movement'):
     cfg.perturb = 0.
-    cfg.test_view = args.test_view
     model = load_network()
     test_loader = create_dataloader('movement')
     writer = ImageWriter(
         output_dir=os.path.join(cfg.logdir, cfg.load_net),
-        exp_name=render_folder_name + f'/{cfg.test_view}/movement')
+        exp_name=render_folder_name)
 
     model.eval()
     for idx, batch in enumerate(tqdm(test_loader)):
@@ -246,16 +249,9 @@ def run_eval(render_folder_name='movement'):
         lpips_loss = get_loss(rgb=torch.from_numpy(pred_img_norm[ray_mask]).float().unsqueeze(0), target=torch.from_numpy(gt_img_norm[ray_mask]).float().unsqueeze(0))
         lpips_all.append(lpips_loss)
 
-    name = args.pre_path.split('/')[-1]
-    
-    save_path = os.path.join(args.pre_path, 'metric.txt')
-    os.makedirs(args.pre_path, exist_ok=True)
-    with open(save_path, 'a') as file_:
-        print_write(file_, '******\n%s\n' % (name))
-        print_write(file_, '%s: %.5f\n'%('psnr', np.array(psnr_all).mean()))
-        print_write(file_, '%s: %.5f\n'%('lpips', np.array(lpips_all).mean()))
-        print_write(file_, '%s: %.5f\n'%('ssim', np.array(ssim_all).mean()))
-
+    print('psnr: ', np.array(psnr_all).mean())
+    print('lpips: ', np.array(lpips_all).mean())
+    print('ssim: ', np.array(ssim_all).mean())
     writer.finalize()
 
 if __name__ == '__main__':

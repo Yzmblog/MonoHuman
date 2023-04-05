@@ -5,7 +5,7 @@ class DatasetArgs(object):
 
     subjects = ['313', '315', '377', '386', '387', '390', '392', '393', '394']
 
-    if cfg.category == 'human_nerf' and cfg.task == 'zju_mocap':
+    if cfg.category == 'monohuman' and cfg.task == 'zju_mocap':
         for sub in subjects:
             dataset_attrs.update({
                 f"zju_{sub}_train": {
@@ -17,6 +17,7 @@ class DatasetArgs(object):
                 },
                 f"zju_{sub}_test": {
                     "dataset_path": f"dataset/zju_mocap/{sub}",
+                    "keyfilter": cfg.test_keyfilter,
                     "ray_shoot_mode": 'image',
                     "src_type": 'zju_mocap',
                     "index_a": cfg.index_a,
@@ -25,7 +26,7 @@ class DatasetArgs(object):
             })
 
     subjects = ['wild']
-    if cfg.category == 'human_nerf' and cfg.task == 'wild':
+    if cfg.category == 'monohuman' and cfg.task == 'wild':
         for sub in subjects:
             dataset_attrs.update({
                 f"monocular_{sub}_train": {

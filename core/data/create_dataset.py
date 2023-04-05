@@ -32,8 +32,6 @@ def create_dataset(data_type='train'):
     # customize dataset arguments according to dataset type
     args['bgcolor'] = None if data_type == 'train' else cfg.bgcolor
 
-    if data_type == 'train':
-        args['skip'] = cfg.skip
     if data_type == 'movement':
         args['skip'] = 1
     if data_type == 'progress':

@@ -7,14 +7,11 @@ ddp: False
 trainer_module: 'core.train.trainers.monohuman.trainer'
 network_module: 'core.nets.monohuman.network'
 
-kick_in_feature: 10000
-
 
 index_a: 117
 index_b: 49
 
 resize_img_scale: 1.
-
 
 debug: False
 ##############################################3

@@ -17,7 +17,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from core.utils.network_util import MotionBasisComputer
-from core.nets.human_nerf.component_factory import \
+from core.nets.monohuman.component_factory import \
     load_feature_extractor, \
     load_positional_embedder, \
     load_canonical_mlp, \
@@ -26,7 +26,7 @@ from core.nets.human_nerf.component_factory import \
     load_non_rigid_motion_mlp, \
     load_blend_net, \
     load_projector
-import time
+
 from configs import cfg
 
 import math
@@ -101,7 +101,7 @@ class Network(nn.Module):
         )
 
         self.fg_thread = cfg.fg_thread
-        self.ibr_net = load_blend_net(cfg.ibrnet.module)(cfg=cfg.blend_net, n_samples=cfg.N_samples)
+        self.blend_net = load_blend_net(cfg.blend_net.module)(cfg=cfg.blend_net, n_samples=cfg.N_samples)
         self.projector = load_projector(cfg.projector.module)()
         # non-rigid motion st positional encoding
         self.get_non_rigid_embedder = \
@@ -183,11 +183,7 @@ class Network(nn.Module):
             self,
             pos_xyz,
             pos_embed_fn,
-            non_rigid_pos_embed_fn,
-            non_rigid_mlp_input, 
             T_joints,
-            O_pts=None,
-            O_joints=None,
             rgb_feat=None):
 
         # (N_rays, N_samples, 3) --> (N_rays x N_samples, 3)
@@ -195,18 +191,13 @@ class Network(nn.Module):
         if rgb_feat is not None:
             rgb_feat = torch.reshape(rgb_feat, [-1, rgb_feat.shape[-1]])
 
-        chunk = cfg.netchunk_per_gpu*len(cfg.secondary_gpus)
+        chunk = cfg.netchunk_per_gpu
         
         result = self._apply_mlp_kernals(
                         pos_flat=pos_flat,
                         pos_embed_fn=pos_embed_fn,
-                        non_rigid_mlp_input=non_rigid_mlp_input,
-                        non_rigid_pos_embed_fn=non_rigid_pos_embed_fn,
                         chunk=chunk, 
                         T_joints=T_joints,
-                        input_dis=cfg.input_dis,
-                        O_pts=O_pts,
-                        O_joints=O_joints,
                         rgb_feat=rgb_feat)
 
         output = {}
@@ -232,7 +223,6 @@ class Network(nn.Module):
             pos_embed_fn,
             chunk,
             T_joints=None,
-            input_dis=False,
             rgb_feat=None):
         raws = []
 
@@ -243,13 +233,11 @@ class Network(nn.Module):
                 end = pos_flat.shape[0]
             xyz = pos_flat[start:end]
 
-            import time
-            if T_joints is not None and input_dis:
-                dis, min_index = closest_distance_to_points(T_joints, SMPL_PARENT, xyz, rel=cfg.rel)
-                rel_dis = dis
-                rel_dis = rel_dis.reshape(-1, 3)
-                dis_embedded = pos_embed_fn(rel_dis)
-                dis_embedded = dis_embedded.reshape(xyz.shape[0], -1)
+            dis, _ = closest_distance_to_points(T_joints, SMPL_PARENT, xyz)
+            rel_dis = dis
+            rel_dis = rel_dis.reshape(-1, 3)
+            dis_embedded = pos_embed_fn(rel_dis)
+            dis_embedded = dis_embedded.reshape(xyz.shape[0], -1)
             xyz_embedded = pos_embed_fn(xyz)
             xyz_embedded = torch.cat((xyz_embedded, dis_embedded), dim=-1)
 
@@ -437,7 +425,6 @@ class Network(nn.Module):
             projector,
             src_imgs,
             featmaps,
-            non_rigid_mlp_input=None,
             bgcolor=None,
             joints=None,
             canonical_joints=None,
@@ -499,8 +486,8 @@ class Network(nn.Module):
             pts_ref = pts_ref.reshape([len(pts_ref)] + list(ori_shape))
             pts = pts.reshape(ori_shape)
 
-            rgb_feat, mask, _ = projector.compute(pts_ref, pts, cnl_pts, in_K, in_E, E, src_imgs, featmaps)
-            rgb_latant = self.ibr_net(rgb_feat, mask)
+            rgb_feat, _, _ = projector.compute(pts_ref, in_K, in_E, src_imgs, featmaps)
+            rgb_latant = self.blend_net(rgb_feat)
 
         else:
             rgb_latant = None
@@ -511,12 +498,8 @@ class Network(nn.Module):
         query_result = self._query_mlp(
                                 pos_xyz=cnl_pts,
                                 rgb_feat=rgb_latant,
-                                non_rigid_mlp_input=non_rigid_mlp_input,
                                 pos_embed_fn=pos_embed_fn,
-                                non_rigid_pos_embed_fn=non_rigid_pos_embed_fn,
-                                T_joints=canonical_joints,
-                                O_pts=pts.reshape(-1, 3),
-                                O_joints=joints)
+                                T_joints=canonical_joints)
         raw = query_result['raws']
 
         rgb_map, acc_map, _, depth_map = \

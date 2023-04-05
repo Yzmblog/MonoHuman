@@ -21,7 +21,7 @@ train:
   batch_size: 1
   shuffle: True
   drop_last: False
-  maxiter: 600000
+  maxiter: 400000
   lr: 0.0005  # 5e-4
   lr_mweight_vol_decoder: 0.000005 # 5e-5
   lr_pose_decoder: 0.00005        # 5e-5
@@ -64,13 +64,17 @@ tpose:
   dataset_module: 'core.data.monohuman.tpose'
   dataset: 'zju_386_test'
 
+text:
+  dataset_module: 'core.data.monohuman.text'
+  dataset: 'zju_386_test'
+
 bgcolor: [0., 0., 0.]
 resize_img_scale: 0.5
 
 # # reduce the size of patch from 32x32 to 20x20 to fit in a single gpu
 patch:
-  sample_subject_ratio: 1.
-  N_patches: 1
+  sample_subject_ratio: 0.8
+  N_patches: 3
   size: 32      # [Patch] size of patch
 fg_thread: 0.3
 netchunk_per_gpu: 50000 # number of pts sent through network in parallel, decrease if running out of memory

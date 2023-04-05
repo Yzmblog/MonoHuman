@@ -322,11 +322,8 @@ class Dataset(torch.utils.data.Dataset):
                 np.array([x_min, y_min]), np.array([x_max, y_max])
 
     def load_image(self, frame_name, bg_color):
-        if cfg.task == 'renbody':
-            imagepath = os.path.join(self.image_dir, '{}.jpg'.format(frame_name))
-        else:
-            imagepath = os.path.join(self.image_dir, '{}.png'.format(frame_name))
-        
+
+        imagepath = os.path.join(self.image_dir, '{}.png'.format(frame_name))
         
         orig_img = np.array(load_image(imagepath))
 
@@ -500,21 +497,21 @@ class Dataset(torch.utils.data.Dataset):
                 'dst_Ts': dst_Ts,
                 'cnl_gtfms': cnl_gtfms
             })
-            if use_time_step:
-                in_dst_Rs = []
-                in_dst_Ts = []
-                for i in range(len(self.in_dst_poses)):
-                    dst_Rs_, dst_Ts_ = body_pose_to_body_RTs(
-                        self.in_dst_poses[i], self.in_dst_tposes_joints[i]
-                    )
-                    in_dst_Rs.append(dst_Rs_)
-                    in_dst_Ts.append(dst_Ts_)
-                results.update(
-                    {
-                        'in_dst_Rs': np.array(in_dst_Rs),
-                        'in_dst_Ts': np.array(in_dst_Ts)
-                    }
+
+            in_dst_Rs = []
+            in_dst_Ts = []
+            for i in range(len(self.in_dst_poses)):
+                dst_Rs_, dst_Ts_ = body_pose_to_body_RTs(
+                    self.in_dst_poses[i], self.in_dst_tposes_joints[i]
                 )
+                in_dst_Rs.append(dst_Rs_)
+                in_dst_Ts.append(dst_Ts_)
+            results.update(
+                {
+                    'in_dst_Rs': np.array(in_dst_Rs),
+                    'in_dst_Ts': np.array(in_dst_Ts)
+                }
+            )
         #print('len---in---dataset', len(in_dst_Rs))
         if 'motion_weights_priors' in self.keyfilter:
             results['motion_weights_priors'] = self.motion_weights_priors.copy()
@@ -537,23 +534,23 @@ class Dataset(torch.utils.data.Dataset):
             results.update({
                 'dst_posevec': dst_posevec_69,
             })
-        if use_time_step:
-            in_dst_posevec = []
-            for posevec in self.in_dst_poses:
-                in_dst_posevec_69 = posevec[3:] + 1e-2
-                in_dst_posevec.append(in_dst_posevec_69)
-            results.update({
-                'in_dst_posevec': np.array(in_dst_posevec)
-            })
 
-            results.update({
+        in_dst_posevec = []
+        for posevec in self.in_dst_poses:
+            in_dst_posevec_69 = posevec[3:] + 1e-2
+            in_dst_posevec.append(in_dst_posevec_69)
+        results.update({
+            'in_dst_posevec': np.array(in_dst_posevec)
+        })
 
-                'in_K': np.array(self.in_K),
-                'in_E': np.array(self.in_E),
-                'E': E,
-                'K': K
-            }
-            )
+        results.update({
+
+            'in_K': np.array(self.in_K),
+            'in_E': np.array(self.in_E),
+            'E': E,
+            'K': K
+        }
+        )
         return results
 
 

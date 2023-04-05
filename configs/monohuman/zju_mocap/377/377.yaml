@@ -8,9 +8,6 @@ trainer_module: 'core.train.trainers.monohuman.trainer'
 network_module: 'core.nets.monohuman.network'
 
 
-kick_in_feature: 10000
-
-
 index_a: 175
 index_b: 420
 
@@ -43,8 +40,6 @@ train:
     lpips: 1.0
     mse: 0.2
 
-
-
 blend_net:
   module: 'core.nets.monohuman.blend.mlp_network'
 
@@ -70,13 +65,17 @@ tpose:
   dataset_module: 'core.data.monohuman.tpose'
   dataset: 'zju_377_test'
 
+text:
+  dataset_module: 'core.data.monohuman.text'
+  dataset: 'zju_377_test'
+
 bgcolor: [0., 0., 0.]
 resize_img_scale: 0.5
 
 # # reduce the size of patch from 32x32 to 20x20 to fit in a single gpu
 patch:
-  sample_subject_ratio: 1.
-  N_patches: 1
+  sample_subject_ratio: 0.8
+  N_patches: 3
   size: 32      # [Patch] size of patch
 fg_thread: 0.3
 netchunk_per_gpu: 50000 # number of pts sent through network in parallel, decrease if running out of memory

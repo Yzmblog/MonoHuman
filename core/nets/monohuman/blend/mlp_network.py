@@ -39,9 +39,6 @@ class BlendNet(nn.Module):
     def __init__(self, cfg, in_feat_ch=32, n_samples=64, **kwargs):
         super(BlendNet, self).__init__()
         self.cfg = cfg
-        self.anti_alias_pooling = cfg.anti_alias_pooling
-        if self.anti_alias_pooling:
-            self.s = nn.Parameter(torch.tensor(0.2), requires_grad=True)
         activation_func = nn.ReLU(inplace=False)
         self.n_samples = n_samples
         self.vis_fc = nn.Sequential(nn.Linear(5, 32),
@@ -61,8 +58,6 @@ class BlendNet(nn.Module):
         self.vis_fc.apply(weights_init)
         self.weight_fc.apply(weights_init)
 
-        ###small init----
-        #self.compress_fc.apply(weights_init)
         last_layer = self.compress_fc[-1]
         init_val = 1e-5
         last_layer.weight.data.uniform_(-init_val, init_val)
@@ -71,8 +66,8 @@ class BlendNet(nn.Module):
 
     def forward(self, rgb_feat):
         '''
-        :param rgb_feat: rgbs and image features [n_rays, n_samples, n_views, n_feat]
-        :return: blend_rgb_feat [n_rays, n_samples, 35]
+        params: @rgb_feat: rgbs and image features [n_rays, n_samples, n_views, n_feat]
+        return: blend rgb_feat [n_rays, n_samples, 35]
         '''
 
         global_feat = torch.cat([rgb_feat, torch.zeros(list(rgb_feat.shape[:-1]) + [1]).to(rgb_feat)], dim=-1)
