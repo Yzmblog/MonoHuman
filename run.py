@@ -244,9 +244,9 @@ def run_eval(render_folder_name='movement'):
         gt_img_norm = gt_img / 255.
 
         # get evaluation
-        psnr_all.append(psnr_metric(pred_img_norm[ray_mask], gt_img_norm[ray_mask]))
-        ssim_all.append(skimage.metrics.structural_similarity(pred_img_norm[ray_mask], gt_img_norm[ray_mask], multichannel=True))
-        lpips_loss = get_loss(rgb=torch.from_numpy(pred_img_norm[ray_mask]).float().unsqueeze(0), target=torch.from_numpy(gt_img_norm[ray_mask]).float().unsqueeze(0))
+        psnr_all.append(psnr_metric(pred_img_norm, gt_img_norm))
+        ssim_all.append(skimage.metrics.structural_similarity(pred_img_norm, gt_img_norm, multichannel=True))
+        lpips_loss = get_loss(rgb=torch.from_numpy(pred_img_norm).float().unsqueeze(0), target=torch.from_numpy(gt_img_norm).float().unsqueeze(0))
         lpips_all.append(lpips_loss)
 
     print('psnr: ', np.array(psnr_all).mean())
