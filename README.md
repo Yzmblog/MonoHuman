@@ -123,10 +123,9 @@ Run the data preprocessing script.
     cd tools/prepare_wild
     python process_pare.py --dataset_path path/to/dataset
     python prepare_dataset.py --dataset_path path/to/dataset
-    python select_keyframe.py --angle_threahold 30 --dataset_path path/to/dataset
-    
-    Then modified index_a and index_b in yaml file according to the output of select_keyframe.py.
+    python select_keyframe.py --angle_threahold 30 --dataset_path path/to/dataset    
 ```
+Then modified index_a and index_b in wild.yaml according to the output of select_keyframe.py.
 
 Training is the same as ZJU_Mocap dataset.
 
