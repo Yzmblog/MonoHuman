@@ -11,7 +11,6 @@ from pathlib import Path
 sys.path.append(str(Path(os.getcwd()).resolve().parents[1]))
 from third_parties.smpl.smpl_numpy import SMPL
 
-from absl import app
 from absl import flags
 FLAGS = flags.FLAGS
 import argparse
@@ -30,16 +29,13 @@ def parse_config():
 
 def main(argv):
 
-    dataset_dir = 'data/in_wild/data'
-    subject = argv.subject
+    dataset_path = argv.dataset_path
 
     sex = 'neutral'
 
-    #dataset_dir = cfg['dataset']['path']
-    subject_dir = os.path.join(dataset_dir, subject)
-    output_path = subject_dir
+    output_path = dataset_path
     
-    with open(os.path.join(subject_dir, 'metadata.json'), 'r') as f:
+    with open(os.path.join(dataset_path, 'metadata.json'), 'r') as f:
         frame_infos = json.load(f)
 
     smpl_model = SMPL(sex=sex, model_dir=MODEL_DIR)
@@ -50,11 +46,10 @@ def main(argv):
 
     for frame_base_name in tqdm(frame_infos):
 
-        #os.system(cmd)
         cam_body_info = frame_infos[frame_base_name] 
-        #out_name = 'frame_{:06d}'.format(int(frame_base_name))
-        poses = np.array(cam_body_info['poses'], dtype=np.float32)
-        betas = np.array(cam_body_info['betas'], dtype=np.float32)
+
+        poses = np.array(cam_body_info['poses'], dtype=np.float32)[0]
+        betas = np.array(cam_body_info['betas'], dtype=np.float32)[0]
         K = np.array(cam_body_info['cam_intrinsics'], dtype=np.float32)
         E = np.array(cam_body_info['cam_extrinsics'], dtype=np.float32)
         
@@ -122,8 +117,7 @@ def parse_args():
 
     """
     parse = argparse.ArgumentParser(description='Prepare wild data')
-    parse.add_argument('--subject', type=str, required=True, help='subjuect name')
-
+    parse.add_argument('--dataset_path', type=str, required=True, help='wild dataset path')
     args = parse.parse_args()
     
     return args

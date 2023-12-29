@@ -53,6 +53,8 @@ parser.add_argument("--masks_path", required=False, type=str)
 parser.add_argument("--iter", required=False, type=str)
 parser.add_argument("--id", required=False, type=str)
 parser.add_argument("opts", default=None, nargs=argparse.REMAINDER)
+parser.add_argument("--local_rank", default=-1)
+parser.add_argument("--ddp", required=False, action="store_true")
 args = parser.parse_args()
 
 cfg = make_cfg(args)

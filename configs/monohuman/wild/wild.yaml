@@ -11,7 +11,7 @@ network_module: 'core.nets.monohuman.network'
 index_a: 117
 index_b: 49
 
-resize_img_scale: 1.
+resize_img_scale: 0.25
 
 debug: False
 ##############################################3
@@ -83,11 +83,12 @@ non_rigid_motion_mlp:
   #kick_in_iter: 0
   full_band_iter: 500000
 
-# # reduce the size of patch from 32x32 to 20x20 to fit in a single gpu
+eval_iter: 400000
+
 patch:
-  sample_subject_ratio: 1.
-  N_patches: 4
-  size: 20      # [Patch] size of patch
+  sample_subject_ratio: 0.9
+  N_patches: 12
+  size: 16      # [Patch] size of patch
 fg_thread: 0.3
 netchunk_per_gpu: 50000 # number of pts sent through network in parallel, decrease if running out of memory
 chunk: 32768   # 32768=1024*32, number of rays processed in parallel, decrease if running out of memory

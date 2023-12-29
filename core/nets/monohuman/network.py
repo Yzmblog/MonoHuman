@@ -77,7 +77,7 @@ def closest_distance_to_points(
     t = _dot(points - heads, tails - heads) / _dot(tails - heads, tails - heads)
     p = heads + (tails - heads) * torch.clamp(t, 0, 1)
     dists = torch.norm(p - points, dim=-1)
-    min_index = dists.argmin(1)#N
+    min_index = dists.argmin(1).cpu()#N
     p_index = parent[min_index]
 
     points = points.squeeze(1)
@@ -539,6 +539,7 @@ class Network(nn.Module):
                 near=None, far=None,
                 iter_val=1e7,
                 **kwargs):
+        
        # torch.autograd.set_detect_anomaly(True)
         dst_Rs=dst_Rs[None, ...]
         dst_Ts=dst_Ts[None, ...]
@@ -551,6 +552,22 @@ class Network(nn.Module):
                 multires=cfg.non_rigid_motion_mlp.multires,                         
                 is_identity=cfg.non_rigid_motion_mlp.i_embed,
                 iter_val=iter_val,)
+
+        # correct body pose
+        if iter_val >= cfg.pose_decoder.get('kick_in_iter', 0) and cfg.task == 'wild':
+            pose_out = self.pose_decoder(dst_posevec)
+            refined_Rs = pose_out['Rs']
+            refined_Ts = pose_out.get('Ts', None)
+            
+            dst_Rs_no_root = dst_Rs[:, 1:, ...]
+            dst_Rs_no_root = self._multiply_corrected_Rs(
+                                        dst_Rs_no_root, 
+                                        refined_Rs)
+            dst_Rs = torch.cat(
+                [dst_Rs[:, 0:1, ...], dst_Rs_no_root], dim=1)
+
+            if refined_Ts is not None:
+                dst_Ts = dst_Ts + refined_Ts
 
         if iter_val >= cfg.kick_in_feature:
             featmaps, _ = self.feature_extractor(src_imgs.permute(0, 3, 1, 2))

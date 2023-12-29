@@ -81,7 +81,6 @@ class Dataset(torch.utils.data.Dataset):
         if maxframes > 0:
             self.framelist = self.framelist[:maxframes]
 
-        bgcolor = None
         self.bgcolor = bgcolor if bgcolor is not None else [0., 0., 0.]
         self.keyfilter = keyfilter
         self.ray_shoot_mode = ray_shoot_mode

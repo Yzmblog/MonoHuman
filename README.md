@@ -38,17 +38,20 @@ Copy the smpl model.
 
 Follow [this page](https://github.com/vchoutas/smplx/tree/master/tools) to remove Chumpy objects from the SMPL model.
 
+### `Download Pretrained model`
+Download the pretrained model from [here](https://drive.google.com/drive/folders/1qLB9rNk703UxfQ80mccEs7EC9SK9c0KN?usp=drive_link)
+
 ## Run on ZJU-Mocap Dataset
 
 ### `Prepare a dataset`
 
 1. Download ZJU-Mocap dataset from [here](https://github.com/zju3dv/neuralbody/blob/master/INSTALL.md#zju-mocap-dataset). 
 
-2. Modify the yaml file of subject at `tools/prepare_zju_mocap/xxx.yaml` as below (Replace the 'xxx' to the subject ID):
+2. Modify the yaml file of subject at `tools/prepare_zju_mocap/377.yaml` as below:
 ```
     dataset:
         zju_mocap_path: /path/to/zju_mocap
-        subject: 'xxx'
+        subject: '377'
         sex: 'neutral'
 
 ...
@@ -56,16 +59,19 @@ Follow [this page](https://github.com/vchoutas/smplx/tree/master/tools) to remov
 3. Run the data preprocessing script.
 ```
     cd tools/prepare_zju_mocap
-    python prepare_dataset.py --cfg xxx.yaml
+    python prepare_dataset.py --cfg 377.yaml
     cd ../../
 ```
 
 4. Modify the 'dataset_path' in core/data/dataset_args.py to your /path/to/dataset
 
 ### `Training`
-Please replace the 'xxx' to the subject ID
 
-    python train.py --cfg configs/monohuman/zju_mocap/xxx/xxx.yaml resume False
+    python train.py --cfg configs/monohuman/zju_mocap/377/377.yaml resume False
+
+DDP Training:
+
+    python -m torch.distributed.launch --nproc_per_node 1 train.py --cfg configs/monohuman/zju_mocap/377/377.yaml --ddp resume False
 
 
 ### `Rendering and Evalutaion`
@@ -78,11 +84,11 @@ Render the motion sequence. (e.g., subject 377)
 
 ![video](assets/377_movement.gif)
 
-Render free-viewpoint images on a particular frame (e.g., subject 386 and frame 100).
+Render free-viewpoint images on a particular frame (e.g., subject 387 and frame 100).
 
     python run.py \
         --type freeview \
-        --cfg configs/monohuman/zju_mocap/386/386.yaml \
+        --cfg configs/monohuman/zju_mocap/387/387.yaml \
         freeview.frame_idx 100
 ![video](assets/386_free.gif)
 
@@ -95,6 +101,43 @@ Generate poses sequence from [MDM](https://github.com/GuyTevet/motion-diffusion-
         text.pose_path path/to/pose_sequence/backflip.npy
 ![video](assets/backflip.gif)
 
+## Run on In-the-wild video
+
+### `Prepare a dataset`
+You can use [PARE](https://github.com/mkocabas/PARE) to get the SMPL annotations and use [RVM](https://github.com/PeterL1n/RobustVideoMatting) to get the masks.
+
+Then put the results in the dataset path like following:
+
+```
+dataset_path
+    ├── images
+    │   └── ${item_id}.png
+    ├── masks
+    │   └── ${item_id}.png
+    └── pare
+        └── ${item_id}.pkl
+```
+
+Run the data preprocessing script.
+```
+    cd tools/prepare_wild
+    python process_pare.py --dataset_path path/to/dataset
+    python prepare_dataset.py --dataset_path path/to/dataset
+    python select_keyframe.py --angle_threahold 30 --dataset_path path/to/dataset
+    
+    Then modified index_a and index_b in yaml file according to the output of select_keyframe.py.
+```
+
+Training is the same as ZJU_Mocap dataset.
+
+### `Rendering`
+The following is a rendering output example(We randomly collect a video from internet).
+
+    python run.py \
+        --type freeview \
+        --cfg configs/monohuman/wild/wild.yaml \
+![video](assets/wild.gif)
+
 ## Acknowledgement
 
 Our code took reference from [HumanNeRF](https://github.com/chungyiweng/humannerf), [IBRNet](https://github.com/googleinterns/IBRNet), [Neural Body](https://github.com/zju3dv/neuralbody). We thank these authors for their great works and open-source contribution.
@@ -103,8 +146,8 @@ Our code took reference from [HumanNeRF](https://github.com/chungyiweng/humanner
 - [x] Code Release.
 - [x] Demo Video Release.
 - [x] Paper Release.
-- [ ] DDP Training.
-- [ ] Pretrained Model Release.
+- [x] DDP Training.
+- [x] Pretrained Model Release.
 
 
 <a name="citation"></a>

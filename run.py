@@ -144,11 +144,9 @@ def run_movement(render_folder_name='movement'):
             batch[k] = v[0]
 
         data = cpu_data_to_gpu(
-                    batch,
-                    exclude_keys=EXCLUDE_KEYS_TO_GPU + ['target_rgbs'])
-
+                batch, exclude_keys=EXCLUDE_KEYS_TO_GPU + ['target_rgbs'])
         with torch.no_grad():
-            #print('iter--val', cfg.eval_iter, flush=True)
+           
             net_output = model(**data, iter_val=cfg.eval_iter)
 
         rgb = net_output['rgb']
