@@ -71,7 +71,7 @@ Download the pretrained model from [here](https://drive.google.com/drive/folders
 
 DDP Training:
 
-    python -m torch.distributed.launch --nproc_per_node 1 train.py --cfg configs/monohuman/zju_mocap/377/377.yaml --ddp resume False
+    python -m torch.distributed.launch --nproc_per_node 4 train.py --cfg configs/monohuman/zju_mocap/377/377.yaml --ddp resume False
 
 
 ### `Rendering and Evalutaion`
