@@ -155,9 +155,10 @@ If you find this work useful for your research, please consider citing our paper
 
 ```bibtex
 @inproceedings{yu2023monohuman,
-  title={{MonoHuman}: Animatable Human Neural Field from Monocular Video},
-  author={Yu, Zhengming and Cheng, Wei and Liu, xian and Wu, Wayne and Lin, Kwan-Yee},
-  booktitle={CVPR},
+  title={MonoHuman: Animatable Human Neural Field from Monocular Video},
+  author={Yu, Zhengming and Cheng, Wei and Liu, Xian and Wu, Wayne and Lin, Kwan-Yee},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages={16943--16953},
   year={2023}
 }
 ```
